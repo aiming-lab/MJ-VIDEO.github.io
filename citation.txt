@@ -1,0 +1,9 @@
+@misc{tong2025mjvideofinegrainedbenchmarkingrewarding,
+      title={MJ-VIDEO: Fine-Grained Benchmarking and Rewarding Video Preferences in Video Generation}, 
+      author={Haibo Tong and Zhaoyang Wang and Zhaorun Chen and Haonian Ji and Shi Qiu and Siwei Han and Kexin Geng and Zhongkai Xue and Yiyang Zhou and Peng Xia and Mingyu Ding and Rafael Rafailov and Chelsea Finn and Huaxiu Yao},
+      year={2025},
+      eprint={2502.01719},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2502.01719}, 
+}
