@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VADER: Video Diffusion Alignment via Reward Gradient</title>
+
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/mySwiper.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <link rel="icon" href="./favicon.ico?">
+
+
+
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <meta property="og:image:width" content="1600" />
+  <meta property="og:image:height" content="900" />
+  
+  <style>
+    .carousel-control-prev,
+    .carousel-control-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 5%;
+      align-items: center;
+      justify-content: center;
+      height: 100%; /* Ensure the buttons take the full height of the container */
+    }
+
+    .video-wrapper {
+      display: flex;
+      justify-content: center; /* Center the video containers horizontally */
+      align-items: center; /* Center the video containers vertically */
+      position: relative;
+      width: 70%; /* Adjust the width to make the whole container smaller */
+      margin: auto; /* Center the container */
+      gap: 1%; /* Adjust the gap between videos */
+      border: none; /* Remove any border */
+      padding: 0; /* Remove any padding */
+      background: none; /* Remove any background */
+    }
+
+    .video-container {
+      position: relative;
+      width: 50%; /* Adjust the width of each video container */
+      overflow: hidden; /* Ensure the video doesn't overflow the container */
+      border-radius: 10px; /* Apply rounded corners */
+    }
+
+    .video-container video {
+      width: 100%;
+      height: auto;
+      border-radius: 10px; /* Ensure the video itself has rounded corners */
+      border: 1px solid #ccc; /* Add a border around the video */
+    }
+
+    .carousel-caption {
+      position: relative;
+      left: 0;
+      color: black;
+      margin-top: 10px; /* Adjust margin as needed */
+      text-align: center;
+  }
+
+  .carousel-inner {
+    overflow: hidden; /* Ensure no overflow is visible during transitions */
+    margin: 0; /* Remove any margin */
+    padding: 0; /* Remove any padding */
+  }
+  .text-box {
+    position: absolute;
+    top: 0; /* Adjust position above the video wrapper */
+    left: 0; /* Position it in the left upper corner */
+    /* background-color: black; */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1; /* Ensure it stays above other elements */
+    font-size: 12px;
+  
+}
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .button-container a {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+  }
+
+  .button-container a i {
+    margin-right: 8px;
+  }
+
+
+  </style>
+</head>
+<body>
+  
+  <section class="hero">
+    <div class="hero-body no-bottom-padding">
+      <div class="container">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">MJ-VIDEO: Fine-Grained Benchmarking and Rewarding Video Preferences in Video Generation</h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <p class="authors">
+                  Haibo Tong<sup>*</sup>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Zhaoyang Wang<sup>*</sup>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Zhaorun Chen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Haonian Ji&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Shi Qiu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Siwei Han&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Kexin Geng&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Zhongkai Xue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Yiyang Zhou&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Peng Xia&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Mingyu Ding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Rafael Rafailov&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Chelsea Finn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Huaxiu Yao
+                  <br /><sup>*</sup>Indicates co-first author<br />
+              </p>
+              
+              </span>
+            </div>
+            <div class="button-container">
+              <a href="https://arxiv.org/pdf/2502.01719" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-file-pdf"></i> Paper
+              </a>
+              <a href="https://github.com/aiming-lab/MJ-Video" class="btn btn-outline-secondary">
+                <i class="fa-brands fa-github"></i> Code
+              </a>
+              <a href="https://github.com/aiming-lab/MJ-Video" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-laptop"></i> Demo
+              </a>
+            </div>
+            </div>
+  
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div style="text-align: center; margin: 30px auto;">
+    <img src="asserts/main_figure.png" alt="Main Figure" 
+         style="width: 90%; max-width: 1500px; border-radius: 10px; display: block; margin: auto;">
+  </div>
+  
+
+
+
+
+  <section class="hero is-light is-small">
+    <div class="hero-body">
+      <div class="container is-two-thirds">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-two-thirds">
+            <h2 class="title is-3">Abstract</h2>
+          </div>
+      </div>
+    
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-two-thirds ">
+          <div class="content has-text-justified">
+            Recent advancements in video generation have significantly improved the ability to synthesize videos from text instructions. However, existing models still struggle with key challenges such as instruction misalignment, content hallucination, safety concerns, and bias. Addressing these limitations, we introduce MJ-BENCH-VIDEO, a large-scale video preference benchmark designed to evaluate video generation across five critical aspects: Alignment, Safety, Fineness, Coherence & Consistency, and Bias & Fairness. This benchmark incorporates 28 fine-grained criteria to provide a comprehensive evaluation of video preference. Building upon this dataset, we propose MJ-VIDEO, a Mixture-of-Experts (MoE)-based video reward model designed to deliver fine-grained reward. MJ-VIDEO can dynamically select relevant experts to accurately judge the preference based on the input text-video pair. This architecture enables more precise and adaptable preference judgments. Through extensive benchmarking on MJ-BENCH-VIDEO, we analyze the limitations of existing video reward models and demonstrate the superior performance of MJ-VIDEO in video preference assessment, achieving 17.58% and 15.87% improvements in overall and fine-grained preference judgments, respectively. Additionally, introducing MJ-VIDEO for preference tuning in video generation enhances the alignment performance.
+          </div>
+        </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title pt-5 pb-2 has-text-centered">
+          <strong>Video Prefered by MJ-VIDEO and VideoScore </strong>
+        </h3>
+      </div>
+    </div>
+</div>
+
+<div id="videoCarouselIndicators" class="carousel slide" data-ride="carousel" data-interval="5000">
+  <div class="carousel-inner">
+    <!-- video 1 -->
+    <div class="carousel-item active">
+      <div class="d-flex justify-content-center video-wrapper">
+        <div class="video-container">
+          <div class="text-box">MJ-VIDEO</div>
+          <video class="d-block w-100" autoplay muted loop>
+            <source src="asserts/6c4e808b75eba131e0baa20c58f8dcb8b82690ba81830d790678c3fa9e76b67b.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-container">
+          <div class="text-box">VideoScore</div>
+          <video class="d-block w-100" autoplay muted loop>
+            <source src="asserts/698174a214e1675cfe70438e3ae51ca8756335f660ff50d7820f9ef705380389.mp4" type="video/mp4">
+          </video>
+        </div>
+        <a class="carousel-control-prev" href="#videoCarouselIndicators" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#videoCarouselIndicators" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+      <div class="carousel-caption">
+        A video of an ethereal black and white landscape with majesticmountains, a winding river, and ethereal birds.
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="d-flex justify-content-center video-wrapper">
+        <div class="video-container">
+          <div class="text-box">MJ-VIDEO</div>
+          <video class="d-block w-100" autoplay muted loop>
+            <source src="asserts/43f942db2b32693112e61283efed261a1d4db47f46688bd14bf61e8c716c2421.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-container">
+          <div class="text-box">VideoScore</div>
+          <video class="d-block w-100" autoplay muted loop>
+            <source src="asserts/a830630413c628067f8970c68d2692676ab8d36c9618fe2b51cc9dfed0fdd8ee.mp4" type="video/mp4">
+          </video>
+        </div>
+        <a class="carousel-control-prev" href="#videoCarouselIndicators" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#videoCarouselIndicators" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+      <div class="carousel-caption">
+        A video of space there are differenet planets and galaxies moving
+      </div>
+    </div>
+    </div>
+    </div>
+
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title pt-5 pb-2 has-text-centered">
+          <strong>MJ-VIDEO Vs VideoScore for Video Alignment</strong>
+        </h3>
+      </div>
+    </div>
+</div>
+
+<div id="videoCarouselIndicators3" class="carousel slide" data-ride="carousel" data-interval="5000">
+  <div class="carousel-inner">
+    <!-- video 1 -->
+    <div class="carousel-item active">
+      <div class="d-flex justify-content-center video-wrapper">
+        <div class="video-container">
+          <div class="text-box">MJ-VIDEO</div>
+          <video class="d-block w-100" autoplay muted loop>
+            <source src="asserts/063883acb4a08df1fedb060dfc1f744c_raw.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-container">
+          <div class="text-box">VideoScore</div>
+          <video class="d-block w-100" autoplay muted loop>
+            <source src="asserts/168af26cf1de9132aa6500faded546e0_raw.mp4" type="video/mp4">
+          </video>
+        </div>
+        <a class="carousel-control-prev" href="#videoCarouselIndicators3" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#videoCarouselIndicators3" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+      <div class="carousel-caption">
+        A dog playing a saxophone by a quiet stream with autumn leaves falling.
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="d-flex justify-content-center video-wrapper">
+        <div class="video-container">
+          <div class="text-box">MJ-VIDEO</div>
+          <video class="d-block w-100" autoplay muted loop>
+            <source src="asserts/e2d997f0bdafec28dc49629d02915921_raw.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-container">
+          <div class="text-box">VideoScore</div>
+          <video class="d-block w-100" autoplay muted loop>
+            <source src="asserts/144824d29363a7b09f360eda4ee9ec2b_raw.mp4" type="video/mp4">
+          </video>
+        </div>
+        <a class="carousel-control-prev" href="#videoCarouselIndicators3" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#videoCarouselIndicators3" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+      <div class="carousel-caption">
+        A rabbit playing an upright piano in a quaint cafe while patrons enjoy their coffee.
+      </div>
+    </div>
+    <div class="carousel-item">
+      <div class="d-flex justify-content-center video-wrapper">
+        <div class="video-container">
+          <div class="text-box">MJ-VIDEO</div>
+          <video class="d-block w-100" autoplay muted loop>
+            <source src="asserts/25ac8846774c204bbb4e7b8326649717_raw.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-container">
+          <div class="text-box">VideoScore</div>
+          <video class="d-block w-100" autoplay muted loop>
+            <source src="asserts/0e8d58daeb928f23963e186811280ff1_raw.mp4" type="video/mp4">
+          </video>
+        </div>
+        <a class="carousel-control-prev" href="#videoCarouselIndicators3" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#videoCarouselIndicators3" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+      <div class="carousel-caption">
+        A cat playing a digital piano in a tech-themed studio.
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <br />
+      <p> If you find this work useful in your research, <a href="citation.txt">please cite</span></a>.</p>
+      <p> Template from <a href="https://nerfies.github.io"><span class="dnerf">Nerfies</span></a>.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+
+
