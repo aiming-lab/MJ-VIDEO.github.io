@@ -46,29 +46,32 @@
 
     .video-wrapper {
       display: flex;
-      justify-content: center; /* Center the video containers horizontally */
-      align-items: center; /* Center the video containers vertically */
+      justify-content: center;
+      align-items: stretch; /* Changed to stretch to ensure same height */
       position: relative;
-      width: 70%; /* Adjust the width to make the whole container smaller */
-      margin: auto; /* Center the container */
-      gap: 1%; /* Adjust the gap between videos */
-      border: none; /* Remove any border */
-      padding: 0; /* Remove any padding */
-      background: none; /* Remove any background */
+      width: 70%;
+      margin: auto;
+      gap: 1%;
+      border: none;
+      padding: 0;
+      background: none;
     }
 
     .video-container {
       position: relative;
-      width: 50%; /* Adjust the width of each video container */
-      overflow: hidden; /* Ensure the video doesn't overflow the container */
-      border-radius: 10px; /* Apply rounded corners */
+      width: 50%;
+      aspect-ratio: 16/9; /* Force a consistent aspect ratio */
+      border-radius: 10px;
+      display: flex; /* Added to help with centering */
+      align-items: center; /* Center content vertically */
     }
 
     .video-container video {
       width: 100%;
-      height: auto;
-      border-radius: 10px; /* Ensure the video itself has rounded corners */
-      border: 1px solid #ccc; /* Add a border around the video */
+      height: 100%; /* Force full height */
+      object-fit: cover; /* Maintain aspect ratio while filling container */
+      border-radius: 10px;
+      border: 1px solid #ccc;
     }
 
     .carousel-caption {
@@ -86,14 +89,13 @@
   }
   .text-box {
     position: absolute;
-    top: 0; /* Adjust position above the video wrapper */
-    left: 0; /* Position it in the left upper corner */
-    /* background-color: black; */
+    top: 0;
+    left: 0;
     color: white;
     padding: 5px 10px;
     border-radius: 10px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 1; /* Ensure it stays above other elements */
+    z-index: 1;
     font-size: 12px;
   
 }
@@ -271,6 +273,9 @@
             <div class="button-container">
               <a href="https://arxiv.org/pdf/2502.01719" class="btn btn-outline-secondary">
                 <i class="fa-solid fa-file-pdf"></i> Paper
+              </a>
+              <a href="https://huggingface.co/datasets/MJ-Bench/MJ-BENCH-VIDEO" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-download"></i> Dataset
               </a>
               <a href="https://github.com/aiming-lab/MJ-Video" class="btn btn-outline-secondary">
                 <i class="fa-brands fa-github"></i> Code
